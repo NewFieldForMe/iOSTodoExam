@@ -23,3 +23,8 @@ RUN \
   bundle config --global jobs 4 && \
   bundle install && \
   rm -rf ~/.gem
+
+COPY . $APP_ROOT
+
+EXPOSE 3000
+CMD ["rails", "server", "-b", "0.0.0.0"]
