@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+TodoItem.create(:title => 'test_todo_1')
+TodoItem.create(:title => 'test_todo_2')
+TodoItem.create(:title => 'test_todo_3')
