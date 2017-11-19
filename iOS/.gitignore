@@ -77,3 +77,5 @@ fastlane/test_output
 /*.gcno
 
 # End of https://www.gitignore.io/api/xcode,swift
+Pods/
+Podfile.lock
