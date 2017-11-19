@@ -15,6 +15,8 @@
 		925AF76F1FC16CC100446595 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 925AF76D1FC16CC100446595 /* LaunchScreen.storyboard */; };
 		925AF77A1FC16CC100446595 /* TodoExamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925AF7791FC16CC100446595 /* TodoExamTests.swift */; };
 		925AF7851FC16CC100446595 /* TodoExamUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925AF7841FC16CC100446595 /* TodoExamUITests.swift */; };
+		92DFBDE01FC19C1000ACF4E5 /* TodoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDDF1FC19C1000ACF4E5 /* TodoModel.swift */; };
+		92DFBDE31FC19D7800ACF4E5 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDE21FC19D7800ACF4E5 /* APIService.swift */; };
 		CBA01DD7102FCEA4D40B6AB8 /* Pods_TodoExamUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE14856CD5E415530B107B10 /* Pods_TodoExamUITests.framework */; };
 		EA24DE6A6F044A0A81C13FB7 /* Pods_TodoExam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8E830BB3DAF1A30AA99AD40 /* Pods_TodoExam.framework */; };
 /* End PBXBuildFile section */
@@ -55,6 +57,8 @@
 		925AF7801FC16CC100446595 /* TodoExamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoExamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		925AF7841FC16CC100446595 /* TodoExamUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoExamUITests.swift; sourceTree = "<group>"; };
 		925AF7861FC16CC100446595 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		92DFBDDF1FC19C1000ACF4E5 /* TodoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoModel.swift; sourceTree = "<group>"; };
+		92DFBDE21FC19D7800ACF4E5 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		9FD5FECFB24EF9164FDED76A /* Pods-TodoExamTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoExamTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TodoExamTests/Pods-TodoExamTests.release.xcconfig"; sourceTree = "<group>"; };
 		C15B0C26D3B406C86FACA20F /* Pods-TodoExamTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoExamTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TodoExamTests/Pods-TodoExamTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C8E830BB3DAF1A30AA99AD40 /* Pods_TodoExam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TodoExam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +128,8 @@
 		925AF7631FC16CC100446595 /* TodoExam */ = {
 			isa = PBXGroup;
 			children = (
+				92DFBDE11FC19D6A00ACF4E5 /* Service */,
+				92DFBDDE1FC19BF200ACF4E5 /* Model */,
 				925AF7641FC16CC100446595 /* AppDelegate.swift */,
 				925AF7661FC16CC100446595 /* ViewController.swift */,
 				925AF7681FC16CC100446595 /* Main.storyboard */,
@@ -150,6 +156,22 @@
 				925AF7861FC16CC100446595 /* Info.plist */,
 			);
 			path = TodoExamUITests;
+			sourceTree = "<group>";
+		};
+		92DFBDDE1FC19BF200ACF4E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				92DFBDDF1FC19C1000ACF4E5 /* TodoModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		92DFBDE11FC19D6A00ACF4E5 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				92DFBDE21FC19D7800ACF4E5 /* APIService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 		AC81D2851DF3F46768767A0B /* Pods */ = {
@@ -441,15 +463,15 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TodoExam/Pods-TodoExam-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -464,7 +486,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92DFBDE01FC19C1000ACF4E5 /* TodoModel.swift in Sources */,
 				925AF7671FC16CC100446595 /* ViewController.swift in Sources */,
+				92DFBDE31FC19D7800ACF4E5 /* APIService.swift in Sources */,
 				925AF7651FC16CC100446595 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

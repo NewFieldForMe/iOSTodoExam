@@ -8,8 +8,8 @@ target 'TodoExam' do
   # Pods for TodoExam
   pod 'RxSwift'
   pod 'Alamofire'
-  pod 'Realm'
   pod 'ObjectMapper'
+  pod 'AlamofireObjectMapper'
 
   target 'TodoExamTests' do
     inherit! :search_paths
