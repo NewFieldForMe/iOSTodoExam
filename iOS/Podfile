@@ -10,6 +10,8 @@ target 'TodoExam' do
   pod 'Alamofire'
   pod 'ObjectMapper'
   pod 'AlamofireObjectMapper'
+  pod 'Swinject'
+  pod 'SwinjectStoryboard'
 
   target 'TodoExamTests' do
     inherit! :search_paths
