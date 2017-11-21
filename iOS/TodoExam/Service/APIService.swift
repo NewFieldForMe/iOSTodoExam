@@ -28,4 +28,15 @@ class APIService {
             return Disposables.create()
         }
     }
+    
+    func postTodo() {
+        Alamofire.request("http://localhost:3000/todo_items", method: HTTPMethod.post, parameters: nil, encoding: JSONEncoding.default, headers: nil).responseObject { (response: DataResponse<TodoModel>) in
+            switch response.result {
+            case .success(let todo):
+                break
+            case .failure(let error):
+                break
+            }
+        }
+    }
 }

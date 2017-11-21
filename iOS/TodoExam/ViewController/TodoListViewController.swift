@@ -11,14 +11,15 @@ import RxSwift
 import RxCocoa
 
 class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    @IBOutlet weak var todoList: UITableView!
+    @IBOutlet weak var todoTableView: UITableView!
     var disposeBag = DisposeBag()
+    var todoItemList: [TodoModel] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        todoList.delegate = self
-        todoList.dataSource = self
+        todoTableView.delegate = self
+        todoTableView.dataSource = self
         /* Rxデータバインド */
 //        todoList.delegate = nil
 //        todoList.dataSource = nil
@@ -29,6 +30,19 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
 //                }
 //                .disposed(by: disposeBag)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let service = APIService()
+        service.getTodoList().subscribe(onNext: { (items) in
+            self.todoItemList = items
+            self.todoTableView.reloadData()
+        }, onError: { (error) in
+            print(error)
+        }, onCompleted: {
+            
+        }).disposed(by: disposeBag)
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -36,13 +50,13 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return self.todoItemList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListItemCell") as! TodoListItemCell
 
-        cell.titleLabel.text = "hogehoge"
+        cell.titleLabel.text = self.todoItemList[indexPath.row].title
 
         return cell
     }
