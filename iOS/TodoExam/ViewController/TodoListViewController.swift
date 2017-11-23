@@ -63,15 +63,14 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func didDeleteItem(index: IndexPath) {
-        self.todoTableView.deleteRows(at: [index], with: UITableViewRowAnimation.fade)
-//        let service = APIService()
-//        service.getTodoList().subscribe(onNext: { (items) in
-//            self.todoItemList = items
-//            self.todoTableView.reloadData()
-//        }, onError: { (error) in
-//            print(error)
-//        }, onCompleted: {
-//
-//        }).disposed(by: disposeBag)
+        let service = APIService()
+        service.getTodoList().subscribe(onNext: { (items) in
+            self.todoItemList = items
+            self.todoTableView.reloadData()
+        }, onError: { (error) in
+            print(error)
+        }, onCompleted: {
+
+        }).disposed(by: disposeBag)
     }
 }
