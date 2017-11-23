@@ -6,6 +6,8 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -30,17 +32,18 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hnC-Hf-WSh">
-                                                    <rect key="frame" x="91" y="11" width="42" height="21"/>
+                                                    <rect key="frame" x="64" y="11" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yCP-rt-4gK">
-                                                    <rect key="frame" x="15" y="6" width="60" height="30"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yCP-rt-4gK">
+                                                    <rect key="frame" x="16" y="5.5" width="32" height="32"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="eQ4-Ai-ejt"/>
+                                                        <constraint firstAttribute="width" secondItem="yCP-rt-4gK" secondAttribute="height" multiplier="1:1" id="afT-fM-gNB"/>
+                                                        <constraint firstAttribute="height" constant="32" id="dH4-49-7zQ"/>
                                                     </constraints>
-                                                    <state key="normal" title="完了"/>
+                                                    <state key="normal" image="box"/>
                                                     <connections>
                                                         <action selector="completeWithSender:" destination="WGh-Lu-VZg" eventType="touchUpInside" id="f94-hC-cZj"/>
                                                     </connections>
@@ -48,7 +51,7 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="yCP-rt-4gK" firstAttribute="centerY" secondItem="yCN-1z-JCT" secondAttribute="centerY" id="FBT-Qh-TmZ"/>
-                                                <constraint firstItem="yCP-rt-4gK" firstAttribute="leading" secondItem="yCN-1z-JCT" secondAttribute="leading" constant="15" id="dkS-5O-iEY"/>
+                                                <constraint firstItem="yCP-rt-4gK" firstAttribute="leading" secondItem="yCN-1z-JCT" secondAttribute="leading" constant="16" id="dkS-5O-iEY"/>
                                                 <constraint firstItem="hnC-Hf-WSh" firstAttribute="centerY" secondItem="yCN-1z-JCT" secondAttribute="centerY" id="gpw-gF-TrL"/>
                                                 <constraint firstItem="hnC-Hf-WSh" firstAttribute="leading" secondItem="yCP-rt-4gK" secondAttribute="trailing" constant="16" id="hq2-78-3rr"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="hnC-Hf-WSh" secondAttribute="trailing" constant="20" symbolic="YES" id="wc1-CK-z6a"/>
@@ -63,9 +66,12 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bgA-43-Dgi">
                                 <rect key="frame" x="0.0" y="64" width="375" height="64"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uol-uO-csy">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
-                                        <state key="normal" title="新規作成"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uol-uO-csy">
+                                        <rect key="frame" x="163.5" y="8" width="48" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="Uol-uO-csy" secondAttribute="height" multiplier="1:1" id="eN5-nH-Gb3"/>
+                                        </constraints>
+                                        <state key="normal" image="plus_button"/>
                                         <connections>
                                             <segue destination="rWZ-Dt-j3O" kind="show" id="cvp-WZ-qDG"/>
                                         </connections>
@@ -73,10 +79,9 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="Uol-uO-csy" secondAttribute="trailing" id="6rA-QV-PjP"/>
-                                    <constraint firstAttribute="bottom" secondItem="Uol-uO-csy" secondAttribute="bottom" id="f1k-gp-Gh4"/>
-                                    <constraint firstItem="Uol-uO-csy" firstAttribute="leading" secondItem="bgA-43-Dgi" secondAttribute="leading" id="k5V-0Z-lEG"/>
-                                    <constraint firstItem="Uol-uO-csy" firstAttribute="top" secondItem="bgA-43-Dgi" secondAttribute="top" id="kIy-AP-P8E"/>
+                                    <constraint firstItem="Uol-uO-csy" firstAttribute="centerX" secondItem="bgA-43-Dgi" secondAttribute="centerX" id="WC2-Ln-cw0"/>
+                                    <constraint firstItem="Uol-uO-csy" firstAttribute="centerY" secondItem="bgA-43-Dgi" secondAttribute="centerY" id="i9P-0K-Mmw"/>
+                                    <constraint firstItem="Uol-uO-csy" firstAttribute="height" secondItem="bgA-43-Dgi" secondAttribute="height" multiplier="0.75" id="yoZ-XP-Cft"/>
                                     <constraint firstAttribute="height" constant="64" id="yu0-eM-Uxe"/>
                                 </constraints>
                             </view>
@@ -163,4 +168,8 @@
             <point key="canvasLocation" x="-286" y="115"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="box" width="136" height="137"/>
+        <image name="plus_button" width="256" height="256"/>
+    </resources>
 </document>
