@@ -16,6 +16,10 @@ class TodoModel: Mappable {
     required convenience init?(map: Map) {
         self.init()
     }
+    
+    func toJSON() -> [String: Any]  {
+        return Mapper<TodoModel>().toJSON(self)
+    }
         
     func mapping(map: Map) {
         id <- map["id"]

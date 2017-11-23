@@ -40,6 +40,9 @@
                                                     <rect key="frame" x="15" y="6" width="46" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <state key="normal" title="完了"/>
+                                                    <connections>
+                                                        <action selector="completeWithSender:" destination="WGh-Lu-VZg" eventType="touchUpInside" id="f94-hC-cZj"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                         </tableViewCellContentView>

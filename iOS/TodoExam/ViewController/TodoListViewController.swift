@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TodoListItemProtocol {
     @IBOutlet weak var todoTableView: UITableView!
     var disposeBag = DisposeBag()
     var todoItemList: [TodoModel] = []
@@ -54,10 +54,24 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListItemCell") as! TodoListItemCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: TodoListItemCell.reuseIdentifier) as! TodoListItemCell
 
-        cell.titleLabel.text = self.todoItemList[indexPath.row].title
+        cell.setup(model: self.todoItemList[indexPath.row], indexPath: indexPath)
+        cell.delegate = self
 
         return cell
+    }
+    
+    func didDeleteItem(index: IndexPath) {
+        self.todoTableView.deleteRows(at: [index], with: UITableViewRowAnimation.fade)
+//        let service = APIService()
+//        service.getTodoList().subscribe(onNext: { (items) in
+//            self.todoItemList = items
+//            self.todoTableView.reloadData()
+//        }, onError: { (error) in
+//            print(error)
+//        }, onCompleted: {
+//
+//        }).disposed(by: disposeBag)
     }
 }
