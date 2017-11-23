@@ -29,15 +29,19 @@ class APIService {
         }
     }
     
-    func postTodo(parameters: [String: Any]) {
-        Alamofire.request("http://localhost:3000/todo_items", method: HTTPMethod.post, parameters: parameters, encoding: JSONEncoding.default, headers: nil).responseObject { (response: DataResponse<TodoModel>) in
-            switch response.result {
-            case .success(_):
-                break
-            case .failure(let error):
-                print(error)
-                break
+    func postTodo(parameters: [String: Any]) -> Completable {
+        return Completable.create { (observer) -> Disposable in
+            Alamofire.request("http://localhost:3000/todo_items", method: HTTPMethod.post, parameters: parameters, encoding: JSONEncoding.default, headers: nil).responseJSON{ (response: DataResponse<Any>) in
+                switch response.result {
+                case .success(_):
+                    observer(.completed)
+                    break
+                case .failure(let error):
+                    observer(.error(error))
+                    break
+                }
             }
+            return Disposables.create()
         }
     }
     

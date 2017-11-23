@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import RxSwift
 
 class TodoItemViewController: UIViewController {
     
     @IBOutlet weak var titleTextField: UITextField!
+    var todo: TodoModel?
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +25,18 @@ class TodoItemViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func okButtion(sender: AnyObject) {
-        self.navigationController?.popViewController(animated: true)
+    @IBAction func completeTouched(sender: AnyObject) {
+        todo = TodoModel()
+        todo?.title = self.titleTextField.text!
+        let service = APIService()
+        service.postTodo(parameters: (todo?.toJSON())!)
+            .subscribe({ (result: CompletableEvent) in
+                switch result {
+                case .completed:
+                    self.navigationController?.popViewController(animated: true)
+                case .error(let value):
+                    print("error: \(value)")
+                }
+            }).disposed(by: disposeBag)
     }
 }
