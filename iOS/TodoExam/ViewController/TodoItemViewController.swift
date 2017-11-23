@@ -17,6 +17,7 @@ class TodoItemViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.title = "Add Todo"
         // Do any additional setup after loading the view, typically from a nib.
     }
     

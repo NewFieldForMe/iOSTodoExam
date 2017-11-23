@@ -20,6 +20,7 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
         // Do any additional setup after loading the view, typically from a nib.
         todoTableView.delegate = self
         todoTableView.dataSource = self
+        self.navigationItem.title = "Todo List"
         /* Rxデータバインド */
 //        todoList.delegate = nil
 //        todoList.dataSource = nil
