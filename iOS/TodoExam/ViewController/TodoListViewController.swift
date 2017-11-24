@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TodoListItemProtocol {
+class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TodoListItemProtocol{
     @IBOutlet weak var todoTableView: UITableView!
     var disposeBag = DisposeBag()
     var todoItemList: [TodoModel] = []
@@ -59,11 +59,17 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
 
         cell.setup(model: self.todoItemList[indexPath.row], indexPath: indexPath)
         cell.delegate = self
+//        cell.completeEvent.subscribe(
+//            onNext: {(index) in
+//                print("delete:" + index.description)
+//            }, onCompleted: {
+//                print("complete:" + indexPath.row.description)
+//        }).disposed(by: cell.disposeBag)
 
         return cell
     }
     
-    func didDeleteItem(index: IndexPath) {
+    func didDeleteTodoItem(index: IndexPath) {
         let service = APIService()
         service.getTodoList().subscribe(onNext: { (items) in
             self.todoItemList = items
@@ -71,7 +77,6 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
         }, onError: { (error) in
             print(error)
         }, onCompleted: {
-
         }).disposed(by: disposeBag)
     }
 }

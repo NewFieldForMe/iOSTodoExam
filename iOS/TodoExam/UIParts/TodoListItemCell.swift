@@ -12,16 +12,18 @@ import RxSwift
 
 protocol TodoListItemProtocol {
     // デリゲートメソッド定義
-    func didDeleteItem(index: IndexPath)
+    func didDeleteTodoItem(index: IndexPath)
 }
 
 class TodoListItemCell: UITableViewCell {
-    
+    private let completeSubject = PublishSubject<IndexPath>()
+    var completeEvent: Observable<IndexPath> { return completeSubject }
     var delegate: TodoListItemProtocol?
     var disposeBag = DisposeBag()
     var indexPath: IndexPath?
 
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var completeButton: UIButton!
     static let reuseIdentifier = "TodoListItemCell"
     var todo: TodoModel?
     
@@ -39,27 +41,31 @@ class TodoListItemCell: UITableViewCell {
         todo = model
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
     func setup(model: TodoModel, indexPath: IndexPath){
         self.todo = model
         self.indexPath = indexPath
         self.titleLabel.text = self.todo?.title
-    }
-    
-    @IBAction func complete(sender: AnyObject) {
-        guard let index = self.indexPath else {
-            return
-        }
-        let service = APIService()
-//        service.postTodo(parameters: (todo?.toJSON())!)
-        service.deleteTodo(id: todo!.id.description)
-        .subscribe({ (result: CompletableEvent) in
-            switch result {
-            case .completed:
-                self.delegate?.didDeleteItem(index: index)
-            case .error(let value):
-                print("error: \(value)")
-            }
-        }).disposed(by: disposeBag)
-    }
+        self.disposeBag = DisposeBag()
+        
+        completeButton.rx.tap.subscribe(
+            onNext: { (sender) in
+                let service = APIService()
+                service.deleteTodo(id: self.todo!.id.description)
+                    .subscribe({ (result: CompletableEvent) in
+                        switch result {
+                        case .completed:
+                            self.delegate?.didDeleteTodoItem(index: self.indexPath!)
+                            self.completeSubject.onNext(self.indexPath!)
+                            self.completeSubject.onCompleted()
+                        case .error(let error):
+                            self.completeSubject.onError(error)
+                        }
+            }).disposed(by: self.disposeBag)
+        }).disposed(by: self.disposeBag)
+    }    
 }
 
