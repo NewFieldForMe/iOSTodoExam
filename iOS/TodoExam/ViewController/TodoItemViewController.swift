@@ -14,6 +14,7 @@ class TodoItemViewController: UIViewController {
     @IBOutlet weak var titleTextField: UITextField!
     var todo: TodoModel?
     var disposeBag = DisposeBag()
+    var api: APIService?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +28,12 @@ class TodoItemViewController: UIViewController {
     }
     
     @IBAction func completeTouched(sender: AnyObject) {
-        todo = TodoModel()
+        guard let api = self.api else {
+            fatalError("api service isn't regist DI container.")
+        }
+        todo = TodoModel(api: api)
         todo?.title = self.titleTextField.text!
-        let service = APIService()
-        service.postTodo(parameters: (todo?.toJSON())!)
+        todo?.post()
             .subscribe({ (result: CompletableEvent) in
                 switch result {
                 case .completed:

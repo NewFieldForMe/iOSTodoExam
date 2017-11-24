@@ -14,6 +14,7 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var todoTableView: UITableView!
     var disposeBag = DisposeBag()
     var todoItemList: [TodoModel] = []
+    var api: APIService?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,15 +35,7 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let service = APIService()
-        service.getTodoList().subscribe(onNext: { (items) in
-            self.todoItemList = items
-            self.todoTableView.reloadData()
-        }, onError: { (error) in
-            print(error)
-        }, onCompleted: {
-            
-        }).disposed(by: disposeBag)
+        refreshTodoList()
     }
 
     override func didReceiveMemoryWarning() {
@@ -70,13 +63,20 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func didDeleteTodoItem(index: IndexPath) {
-        let service = APIService()
-        service.getTodoList().subscribe(onNext: { (items) in
-            self.todoItemList = items
-            self.todoTableView.reloadData()
-        }, onError: { (error) in
-            print(error)
-        }, onCompleted: {
-        }).disposed(by: disposeBag)
+        refreshTodoList()
+    }
+    
+    func refreshTodoList() {
+        guard let api = self.api else {
+            fatalError("api service isn't regist DI container.")
+        }
+        TodoModel(api: api).getList()
+            .subscribe(onNext: { (items) in
+                self.todoItemList = items
+                self.todoTableView.reloadData()
+            }, onError: { (error) in
+                print(error)
+            }, onCompleted: {
+            }).disposed(by: disposeBag)
     }
 }

@@ -53,8 +53,7 @@ class TodoListItemCell: UITableViewCell {
         
         completeButton.rx.tap.subscribe(
             onNext: { (sender) in
-                let service = APIService()
-                service.deleteTodo(id: self.todo!.id.description)
+                self.todo!.delete()
                     .subscribe({ (result: CompletableEvent) in
                         switch result {
                         case .completed:
@@ -64,8 +63,8 @@ class TodoListItemCell: UITableViewCell {
                         case .error(let error):
                             self.completeSubject.onError(error)
                         }
-            }).disposed(by: self.disposeBag)
+                    }).disposed(by: self.disposeBag)
         }).disposed(by: self.disposeBag)
-    }    
+    }
 }
 
