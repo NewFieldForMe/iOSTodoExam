@@ -24,24 +24,18 @@ class TodoItemViewController: UIViewController {
         self.okButton.layer.cornerRadius = self.okButton.frame.height / 2
         self.okButton.backgroundColor = UIColor.orange
         
-        let titleObservable = titleTextField.rx.text.orEmpty.asObservable()
-        let okObservable = okButton.rx.tap.asObservable()
-        okObservable.withLatestFrom(titleObservable)
-            .flatMap { (text) -> Observable<TodoModel> in
-                self.todo = TodoModel(api: self.api!)
-                self.todo?.title = text
-                return Observable.just(self.todo!)
-            }
-            .subscribe(onNext: { (todo) in
-                todo.post().subscribe({ (event) in
-                    self.navigationController?.popViewController(animated: true)
-                }).disposed(by: self.disposeBag)
-            }, onError: { (error) in
-                print(error)
-            }, onCompleted: {
-                print("comp")
-            })
-            .disposed(by: self.disposeBag)
+        let vm = TodoItemViewControllerViewModel(input: (
+            todoTitle: titleTextField.rx.text.orEmpty.asObservable(),
+            okTaps: okButton.rx.tap.asObservable()
+            ),
+            dependency: self.api!)
+        
+        vm.createTodo.subscribe(onNext: { (_) in
+            self.navigationController?.popViewController(animated: true)
+        }, onError: { (error) in
+            print(error)
+        }, onCompleted: {
+        }).disposed(by: self.disposeBag)
     }
     
     override func didReceiveMemoryWarning() {
@@ -49,3 +43,23 @@ class TodoItemViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 }
+
+class TodoItemViewControllerViewModel {
+    let createTodo: Observable<Void>
+    init(input: (
+        todoTitle: Observable<String>,
+        okTaps: Observable<Void>
+        ),
+         dependency:(
+        APIService
+        )
+        ) {
+        createTodo = input.okTaps.withLatestFrom(input.todoTitle)
+            .flatMap { (text) -> Observable<Void> in
+                let todo = TodoModel(api: dependency)
+                todo.title = text
+                return todo.post().andThen(Observable<Void>.just(())).asObservable()
+            }
+    }
+}
+
