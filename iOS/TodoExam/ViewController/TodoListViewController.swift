@@ -65,6 +65,13 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "TodoItemViewController") as! TodoItemViewController
+        controller.modifyTodo = self.todoItemList[indexPath.row]
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
     func refreshTodoList() {
         guard let api = self.api else {
             fatalError("api service isn't regist DI container.")

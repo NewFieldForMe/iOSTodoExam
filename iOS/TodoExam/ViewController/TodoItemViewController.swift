@@ -13,28 +13,54 @@ class TodoItemViewController: UIViewController {
     
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var okButton: UIButton!
-    var todo: TodoModel?
+    var modifyTodo: TodoModel?
     var disposeBag = DisposeBag()
     var api: APIService?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "Add Todo"
-        
         self.okButton.layer.cornerRadius = self.okButton.frame.height / 2
         self.okButton.backgroundColor = UIColor.orange
         
         let vm = TodoItemViewControllerViewModel(input: (
             todoTitle: titleTextField.rx.text.orEmpty.asObservable(),
-            okTaps: okButton.rx.tap.asObservable()
+            okTaps: okButton.rx.tap.asObservable(),
+            modifyTodo: Observable.just(self.modifyTodo)
             ),
             dependency: self.api!)
         
-        vm.createTodo.subscribe(onNext: { (_) in
+        vm.create.subscribe(onNext: { (_) in
             self.navigationController?.popViewController(animated: true)
         }, onError: { (error) in
             print(error)
         }, onCompleted: {
+        }).disposed(by: self.disposeBag)
+        
+        vm.modify.subscribe(onNext: { (_) in
+            self.navigationController?.popViewController(animated: true)
+        }, onError: { (error) in
+            print(error)
+        }, onCompleted: {
+        }).disposed(by: self.disposeBag)
+        
+        vm.navigationTitle.asObservable()
+            .bind(to: self.navigationItem.rx.title)
+            .disposed(by: self.disposeBag)
+        
+        titleTextField.rx.text.subscribe(onNext: { (title) in
+            vm.todoTitle.value = title!
+        }, onError: { (error) in
+        }, onCompleted: {
+        }).disposed(by: self.disposeBag)
+        
+        vm.todoTitle.asObservable()
+            .bind(to: self.titleTextField.rx.text)
+            .disposed(by: self.disposeBag)
+        
+        // FIXME: 初期化もViewModelの中で行いたい
+        vm.screenInitialize.subscribe(onNext: { (model) in
+            vm.todoTitle.value = model.title
+            vm.navigationTitle.value = "Edit Todo"
         }).disposed(by: self.disposeBag)
     }
     
@@ -45,21 +71,51 @@ class TodoItemViewController: UIViewController {
 }
 
 class TodoItemViewControllerViewModel {
-    let createTodo: Observable<Void>
+    let create: Observable<Void>
+    let modify: Observable<Void>
+    var screenInitialize: Observable<TodoModel>
+    var navigationTitle :Variable<String> = Variable<String>("")
+    var todoTitle: Variable<String> = Variable<String>("")
+    var disposeBag = DisposeBag()
+
     init(input: (
         todoTitle: Observable<String>,
-        okTaps: Observable<Void>
+        okTaps: Observable<Void>,
+        modifyTodo: Observable<TodoModel?>
         ),
          dependency:(
         APIService
         )
         ) {
-        createTodo = input.okTaps.withLatestFrom(input.todoTitle)
-            .flatMap { (text) -> Observable<Void> in
+        create = Observable.combineLatest(
+                input.okTaps.withLatestFrom(input.todoTitle),
+                input.modifyTodo)
+            .flatMap { (text, modifyModel) -> Observable<Void> in
+                if modifyModel != nil { return Observable.never() }
                 let todo = TodoModel(api: dependency)
                 todo.title = text
                 return todo.post().andThen(Observable<Void>.just(())).asObservable()
             }
+        
+        let modifyTodoModel = input.modifyTodo
+            .flatMap { $0.flatMap { Observable.just($0) } ?? Observable.empty() }
+        
+        modify = Observable.combineLatest(
+            input.okTaps.withLatestFrom(todoTitle.asObservable()),
+            modifyTodoModel
+            )
+            .flatMap { (text, todo) -> Observable<TodoModel> in
+                todo.title = text
+                return todo.update()
+            }
+            .flatMap({ (model) -> Observable<Void> in
+                return Observable.just(())
+            })
+        
+        self.navigationTitle.value = "Add Todo"
+        self.todoTitle.value = ""
+        
+        screenInitialize = modifyTodoModel
     }
 }
 

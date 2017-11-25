@@ -109,7 +109,7 @@
         <!--Todo Item View Controller-->
         <scene sceneID="WAJ-pB-nyE">
             <objects>
-                <viewController id="rWZ-Dt-j3O" customClass="TodoItemViewController" customModule="TodoExam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TodoItemViewController" id="rWZ-Dt-j3O" customClass="TodoItemViewController" customModule="TodoExam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ixq-Df-Yxm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -124,8 +124,8 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create a ToDo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ecd-fT-pMu">
-                                <rect key="frame" x="123.5" y="178" width="128.5" height="25.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Input a Todo title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ecd-fT-pMu">
+                                <rect key="frame" x="113" y="178" width="150" height="25.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>

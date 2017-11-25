@@ -15,6 +15,7 @@ import AlamofireObjectMapper
 protocol APIService{
     func getListAPI<T: Mappable & IAPIInfomation>(model: T) -> Observable<[T]>
     func postAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable
+    func updateAPI<T: Mappable & IAPIInfomation>(model: T) -> Observable<T>
     func deleteAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable
 }
 
@@ -58,6 +59,21 @@ class API: APIService {
         }
     }
     
+    func updateAPI<T>(model: T) -> Observable<T> where T : Mappable, T : IAPIInfomation {
+        return Observable.create { (observer: AnyObserver<T>) in
+            Alamofire.request(model.baseURL + model.path + "/" + model.id.description, method: HTTPMethod.put, parameters: model.requestParameter(), encoding: JSONEncoding.default, headers: nil).responseObject() { (response: DataResponse<T>) in
+                switch response.result {
+                case .success(let modelArray):
+                    observer.onNext(modelArray)
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
     func deleteAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable {
         return Completable.create { (observer) -> Disposable in
             Alamofire.request(model.baseURL + model.path + "/" + model.id.description, method: HTTPMethod.delete, parameters: nil, encoding: JSONEncoding.default, headers: nil).responseJSON{ (response: DataResponse<Any>) in

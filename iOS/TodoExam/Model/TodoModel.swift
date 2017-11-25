@@ -15,6 +15,7 @@ import Swinject
 protocol ModelAPI {
     func getList() -> Observable<[TodoModel]>
     func post() -> Completable
+    func update() -> Observable<TodoModel>
     func delete() -> Completable
 }
 
@@ -51,6 +52,10 @@ class TodoModel: Mappable, IAPIInfomation, ModelAPI {
     
     func post() -> Completable {
         return api.postAPI(model: self)
+    }
+    
+    func update() -> Observable<TodoModel> {
+        return api.updateAPI(model: self)
     }
     
     func delete() -> Completable {
