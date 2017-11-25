@@ -10,15 +10,9 @@ import UIKit
 import ObjectMapper
 import RxSwift
 
-protocol TodoListItemProtocol {
-    // デリゲートメソッド定義
-    func didDeleteTodoItem(index: IndexPath)
-}
-
 class TodoListItemCell: UITableViewCell {
     private let completeSubject = PublishSubject<IndexPath>()
     var completeEvent: Observable<IndexPath> { return completeSubject }
-    var delegate: TodoListItemProtocol?
     var disposeBag = DisposeBag()
     var indexPath: IndexPath?
 
@@ -57,9 +51,7 @@ class TodoListItemCell: UITableViewCell {
                     .subscribe({ (result: CompletableEvent) in
                         switch result {
                         case .completed:
-                            self.delegate?.didDeleteTodoItem(index: self.indexPath!)
                             self.completeSubject.onNext(self.indexPath!)
-                            self.completeSubject.onCompleted()
                         case .error(let error):
                             self.completeSubject.onError(error)
                         }

@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TodoListItemProtocol{
+class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
     @IBOutlet weak var todoTableView: UITableView!
     @IBOutlet weak var addButton: UIButton!
     var disposeBag = DisposeBag()
@@ -57,19 +57,12 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
         let cell = tableView.dequeueReusableCell(withIdentifier: TodoListItemCell.reuseIdentifier) as! TodoListItemCell
 
         cell.setup(model: self.todoItemList[indexPath.row], indexPath: indexPath)
-        cell.delegate = self
-//        cell.completeEvent.subscribe(
-//            onNext: {(index) in
-//                print("delete:" + index.description)
-//            }, onCompleted: {
-//                print("complete:" + indexPath.row.description)
-//        }).disposed(by: cell.disposeBag)
+        cell.completeEvent.subscribe(
+            onNext: {(index) in
+                self.refreshTodoList()
+        }).disposed(by: cell.disposeBag)
 
         return cell
-    }
-    
-    func didDeleteTodoItem(index: IndexPath) {
-        refreshTodoList()
     }
     
     func refreshTodoList() {
