@@ -12,6 +12,7 @@ import RxSwift
 class TodoItemViewController: UIViewController {
     
     @IBOutlet weak var titleTextField: UITextField!
+    @IBOutlet weak var okButton: UIButton!
     var todo: TodoModel?
     var disposeBag = DisposeBag()
     var api: APIService?
@@ -20,27 +21,29 @@ class TodoItemViewController: UIViewController {
         super.viewDidLoad()
         self.navigationItem.title = "Add Todo"
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let titleObservable = titleTextField.rx.text.orEmpty.asObservable()
+        let okObservable = okButton.rx.tap.asObservable()
+        okObservable.withLatestFrom(titleObservable)
+            .flatMap { (text) -> Observable<TodoModel> in
+                self.todo = TodoModel(api: self.api!)
+                self.todo?.title = text
+                return Observable.just(self.todo!)
+            }
+            .subscribe(onNext: { (todo) in
+                todo.post().subscribe({ (event) in
+                    self.navigationController?.popViewController(animated: true)
+                }).disposed(by: self.disposeBag)
+            }, onError: { (error) in
+                print(error)
+            }, onCompleted: {
+                print("comp")
+            })
+            .disposed(by: self.disposeBag)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func completeTouched(sender: AnyObject) {
-        guard let api = self.api else {
-            fatalError("api service isn't regist DI container.")
-        }
-        todo = TodoModel(api: api)
-        todo?.title = self.titleTextField.text!
-        todo?.post()
-            .subscribe({ (result: CompletableEvent) in
-                switch result {
-                case .completed:
-                    self.navigationController?.popViewController(animated: true)
-                case .error(let value):
-                    print("error: \(value)")
-                }
-            }).disposed(by: disposeBag)
     }
 }

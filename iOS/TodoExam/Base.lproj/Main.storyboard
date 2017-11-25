@@ -131,15 +131,13 @@
                                 <rect key="frame" x="285" y="271" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="完了"/>
-                                <connections>
-                                    <action selector="completeTouchedWithSender:" destination="rWZ-Dt-j3O" eventType="touchUpInside" id="CrH-og-dmh"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <viewLayoutGuide key="safeArea" id="y1P-pg-DZa"/>
                     </view>
                     <connections>
+                        <outlet property="okButton" destination="6gu-WT-aIR" id="wg1-L0-5H5"/>
                         <outlet property="titleTextField" destination="dvC-Df-K3m" id="Pgn-Ea-ufT"/>
                     </connections>
                 </viewController>
