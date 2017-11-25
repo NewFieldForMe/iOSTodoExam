@@ -98,6 +98,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Vbd-4c-DpN"/>
                     <connections>
+                        <outlet property="addButton" destination="Uol-uO-csy" id="28p-Ep-zoh"/>
                         <outlet property="todoTableView" destination="4lA-oL-yzk" id="7gM-b3-StD"/>
                     </connections>
                 </viewController>
@@ -113,27 +114,48 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dvC-Df-K3m">
-                                <rect key="frame" x="50" y="203" width="281" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="azn-UT-BfO">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" red="1" green="0.80479969733166645" blue="0.36666854635944235" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Todo" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dvC-Df-K3m">
+                                <rect key="frame" x="50" y="233" width="275" height="30"/>
                                 <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="表題" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ecd-fT-pMu">
-                                <rect key="frame" x="50" y="178" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create a ToDo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ecd-fT-pMu">
+                                <rect key="frame" x="123.5" y="178" width="128.5" height="25.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6gu-WT-aIR">
-                                <rect key="frame" x="285" y="271" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="完了"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6gu-WT-aIR">
+                                <rect key="frame" x="60" y="368" width="255" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="Hi9-24-8uo"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                <state key="normal" title="OK">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dvC-Df-K3m" firstAttribute="top" secondItem="Ecd-fT-pMu" secondAttribute="bottom" constant="29.5" id="06r-io-mE8"/>
+                            <constraint firstItem="Ecd-fT-pMu" firstAttribute="top" secondItem="y1P-pg-DZa" secondAttribute="top" constant="114" id="2fw-PM-aSA"/>
+                            <constraint firstItem="azn-UT-BfO" firstAttribute="top" secondItem="y1P-pg-DZa" secondAttribute="top" id="CqY-7F-x2j"/>
+                            <constraint firstItem="y1P-pg-DZa" firstAttribute="trailing" secondItem="dvC-Df-K3m" secondAttribute="trailing" constant="50" id="FAl-dg-TAt"/>
+                            <constraint firstItem="Ecd-fT-pMu" firstAttribute="centerX" secondItem="y1P-pg-DZa" secondAttribute="centerX" id="J6e-iB-x4Z"/>
+                            <constraint firstItem="azn-UT-BfO" firstAttribute="leading" secondItem="y1P-pg-DZa" secondAttribute="leading" id="OQK-oc-yb6"/>
+                            <constraint firstItem="6gu-WT-aIR" firstAttribute="leading" secondItem="y1P-pg-DZa" secondAttribute="leading" constant="60" id="RVt-P8-ocZ"/>
+                            <constraint firstItem="dvC-Df-K3m" firstAttribute="leading" secondItem="y1P-pg-DZa" secondAttribute="leading" constant="50" id="aZt-mQ-irY"/>
+                            <constraint firstItem="6gu-WT-aIR" firstAttribute="top" secondItem="dvC-Df-K3m" secondAttribute="bottom" constant="105" id="evw-5L-Vdf"/>
+                            <constraint firstItem="y1P-pg-DZa" firstAttribute="trailing" secondItem="6gu-WT-aIR" secondAttribute="trailing" constant="60" id="gTN-wc-p72"/>
+                            <constraint firstItem="y1P-pg-DZa" firstAttribute="trailing" secondItem="azn-UT-BfO" secondAttribute="trailing" id="n49-Yx-haV"/>
+                            <constraint firstItem="y1P-pg-DZa" firstAttribute="bottom" secondItem="azn-UT-BfO" secondAttribute="bottom" id="n53-xp-QtI"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="y1P-pg-DZa"/>
                     </view>
                     <connections>

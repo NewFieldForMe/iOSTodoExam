@@ -12,6 +12,7 @@ import RxCocoa
 
 class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TodoListItemProtocol{
     @IBOutlet weak var todoTableView: UITableView!
+    @IBOutlet weak var addButton: UIButton!
     var disposeBag = DisposeBag()
     var todoItemList: [TodoModel] = []
     var api: APIService?
@@ -19,6 +20,11 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let backImage = UIImage(named: "plus_button")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+        addButton.setImage(backImage!, for: UIControlState.normal)
+        addButton.tintColor = UIColor.orange
+        
         todoTableView.delegate = self
         todoTableView.dataSource = self
         self.navigationItem.title = "Todo List"

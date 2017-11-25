@@ -20,7 +20,9 @@ class TodoItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "Add Todo"
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        self.okButton.layer.cornerRadius = self.okButton.frame.height / 2
+        self.okButton.backgroundColor = UIColor.orange
         
         let titleObservable = titleTextField.rx.text.orEmpty.asObservable()
         let okObservable = okButton.rx.tap.asObservable()
