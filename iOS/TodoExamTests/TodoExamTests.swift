@@ -14,6 +14,9 @@ import RxCocoa
 import ObjectMapper
 @testable import TodoExam
 
+/*
+ *  APIService Stub
+ */
 class APIStub: APIService {
     func getListAPI<T>(model: T) -> Observable<[T]> where T : Mappable, T : IAPIInfomation {
         let one = T(api: self)
@@ -42,6 +45,9 @@ class APIStub: APIService {
     }
 }
 
+/*
+ *  TodoModel 単体テスト
+ */
 class TodoModelTests: XCTestCase {
     let APIMock = APIStub()
     
@@ -88,7 +94,7 @@ class TodoModelTests: XCTestCase {
         let observable = model.update()
         let result = try! observable.toBlocking().last()!
         
-        XCTAssert(result === model)
+        XCTAssert(result.title == model.title)
     }
     
     /* TodoModel Deleteメソッドテスト
@@ -107,8 +113,14 @@ class TodoModelTests: XCTestCase {
     }
 }
 
+/*
+ *  TodoItemViewControllerViewModel 単体テスト
+ */
 class TodoItemViewControllerViewModelTests: XCTestCase {
     let APIMock = APIStub()
+    var todoModel: TodoModel?
+    let okButton = UIButton()
+    let disposeBag = DisposeBag()
     
     override func setUp() {
         super.setUp()
@@ -118,70 +130,118 @@ class TodoItemViewControllerViewModelTests: XCTestCase {
         super.tearDown()
     }
     
-    /* TodoItemViewControllerViewModel TodoTitle
-     * 条件：修正対象Todoが設定されていないこと。
-     * 期待結果：todoのタイトルが空であること
+    /*
+     *  修正対象のTodoが設定されていないViewModelを作成
      */
-    func testTodoTitle_Empty() {
-        var todoModel: TodoModel?
+    func makeViewModelEmpty() -> TodoItemViewControllerViewModel{
         todoModel = nil
 
-        let vm = TodoItemViewControllerViewModel(
-                input: (
+        return TodoItemViewControllerViewModel(
+            input: (
                 todoTitle: Observable.just("todoTitle"),
-                okTaps: Observable.empty(),
+                okTaps: okButton.rx.tap.asObservable(),
                 modifyTodo: Observable.just(todoModel)
             ),
             dependency: self.APIMock)
-        
-        XCTAssert(vm.todoTitle.value.isEmpty)
     }
     
-    /* TodoItemViewControllerViewModel TodoTitle
-     * 条件：修正対象Todoが設定されている。
-     * 期待結果：Add Todoが表示されること
+    /*
+     *  修正対象のTodoが設定されているViewModelを作成
      */
-    func testTodoTitle_NotEmpty() {
-        var todoModel: TodoModel?
+    func makeViewModelModify() -> TodoItemViewControllerViewModel {
         todoModel = TodoModel(api: APIMock)
         todoModel!.title = "modify_title"
         
-        let vm = TodoItemViewControllerViewModel(
+        return TodoItemViewControllerViewModel(
             input: (
                 todoTitle: Observable.just("todoTitle"),
-                okTaps: Observable.empty(),
+                okTaps: okButton.rx.tap.asObservable(),
                 modifyTodo: Observable.just(todoModel)
             ),
             dependency: self.APIMock)
+    }
+    
+    /* TodoItemViewControllerViewModel TodoTitle 作成
+     * 条件：修正対象Todoが設定されていない。
+     * 期待結果：todoTitleが設定されていること
+     * 期待結果：navigationTitleに"Add Todo"が設定されていること
+     */
+    func testTodoTitle_isCreate() {
+        let vm = makeViewModelEmpty()
         
-        // FIXME: メソッドを使っているができれば、RxSwiftを使いたい
-        // バインディングのタイミングがどうしても後になって、空の状態になってしまうため、
-        // メソッドを使っている。
-        vm.screenInitializeForModify()
-        
+        XCTAssert(vm.todoTitle.value.isEmpty)
+        XCTAssert(vm.navigationTitle.value == "Add Todo")
+    }
+    
+    /* TodoItemViewControllerViewModel TodoTitle 修正
+     * 条件：修正対象Todoが設定されている。
+     * 期待結果：todoTitleが設定されていること
+     * 期待結果：navigationTitleに"Edit Todo"が設定されていること
+     */
+    func testTodoTitle_isModify() {
+        let vm = makeViewModelModify()
         XCTAssert(vm.todoTitle.value == todoModel!.title)
-    }
-}
-
-class TodoExamTests: XCTestCase {
-    
-    let APIMock = APIStub()
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        XCTAssert(vm.navigationTitle.value == "Edit Todo")
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    /* TodoItemViewControllerViewModel TodoTitle 修正
+     * 対象：Create実行
+     * 条件：修正対象Todoが設定されている。
+     * 期待結果：Createが実行されないこと
+     */
+    func testCreate_isModify() {
+        let vm = makeViewModelModify()
+        vm.create.subscribe(onNext: { () in
+            XCTAssert(false)
+        }).disposed(by: disposeBag)
+        okButton.sendActions(for: .touchUpInside)
+        XCTAssert(true)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    /* TodoItemViewControllerViewModel TodoTitle 修正
+     * 対象：modify実行
+     * 条件：修正対象Todoが設定されている。
+     * 期待結果：modifyが実行されること
+     */
+    func testModify_isModify() {
+        let vm = makeViewModelModify()
+        var result = false
+        vm.modify.subscribe(onNext: { () in
+            result = true
+        }).disposed(by: disposeBag)
+        okButton.sendActions(for: .touchUpInside)
+        _ = vm.modify.toBlocking(timeout: 3)
+        XCTAssert(result)
     }
     
+    /* TodoItemViewControllerViewModel TodoTitle 追加
+     * 対象：create実行
+     * 条件：修正対象Todoが設定されてない。
+     * 期待結果：createが実行されること
+     */
+    func testCreate_isCreate() {
+        let vm = makeViewModelEmpty()
+        var result = false
+        vm.create.subscribe(onNext: { () in
+            result = true
+        }).disposed(by: disposeBag)
+        okButton.sendActions(for: .touchUpInside)
+        _ = vm.create.toBlocking(timeout: 3)
+        XCTAssert(result)
+    }
+    
+    /* TodoItemViewControllerViewModel TodoTitle 追加
+     * 対象：modify実行
+     * 条件：修正対象Todoが設定されてない。
+     * 期待結果：modifyが実行されないこと
+     */
+    func testModify_isCreate() {
+        let vm = makeViewModelEmpty()
+        vm.modify.subscribe(onNext: { () in
+            XCTAssert(false)
+        }).disposed(by: disposeBag)
+        okButton.sendActions(for: .touchUpInside)
+        _ = vm.create.toBlocking(timeout: 3)
+        XCTAssert(true)
+    }
 }

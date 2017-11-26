@@ -47,17 +47,15 @@ class TodoItemViewController: UIViewController {
             .bind(to: self.navigationItem.rx.title)
             .disposed(by: self.disposeBag)
         
+        vm.todoTitle.asObservable()
+            .bind(to: self.titleTextField.rx.text)
+            .disposed(by: self.disposeBag)
+        
         titleTextField.rx.text.subscribe(onNext: { (title) in
             vm.todoTitle.value = title!
         }, onError: { (error) in
         }, onCompleted: {
         }).disposed(by: self.disposeBag)
-        
-        vm.todoTitle.asObservable()
-            .bind(to: self.titleTextField.rx.text)
-            .disposed(by: self.disposeBag)
-        
-        vm.screenInitializeForModify()
     }
     
     override func didReceiveMemoryWarning() {
@@ -69,10 +67,9 @@ class TodoItemViewController: UIViewController {
 class TodoItemViewControllerViewModel {
     let create: Observable<Void>
     let modify: Observable<Void>
-    let modifyTodoModel: Observable<TodoModel>
-    var navigationTitle :Variable<String> = Variable<String>("")
-    var todoTitle: Variable<String> = Variable<String>("")
-    var disposeBag = DisposeBag()
+    let navigationTitle :Variable<String> = Variable<String>("")
+    let todoTitle: Variable<String> = Variable<String>("")
+    private let disposeBag = DisposeBag()
 
     init(input: (
         todoTitle: Observable<String>,
@@ -93,7 +90,7 @@ class TodoItemViewControllerViewModel {
                 return todo.post().andThen(Observable<Void>.just(())).asObservable()
             }
         
-        modifyTodoModel = input.modifyTodo
+        let modifyTodoModel = input.modifyTodo
             .flatMap { $0.flatMap { Observable.just($0) } ?? Observable.empty() }
         
         modify = Observable.combineLatest(
@@ -108,18 +105,14 @@ class TodoItemViewControllerViewModel {
                 return Observable.just(())
             })
         
-        self.navigationTitle.value = "Add Todo"
-        self.todoTitle.value = ""
-    }
-    
-    // FIXME: メソッドを使っているができれば、RxSwiftを使いたい
-    // バインディングのタイミングがどうしても後になって、空の状態になってしまうため、
-    // メソッドを使っている。
-    func screenInitializeForModify(){
-        self.modifyTodoModel.subscribe(onNext: { (todo) in
-            self.todoTitle.value = todo.title
+        todoTitle.value = ""
+        navigationTitle.value = "Add Todo"
+        
+        modifyTodoModel.subscribe(onNext: { (model) in
+            self.todoTitle.value = model.title
             self.navigationTitle.value = "Edit Todo"
-        }).disposed(by: self.disposeBag)
+        })
+        .disposed(by: disposeBag)
     }
 }
 
