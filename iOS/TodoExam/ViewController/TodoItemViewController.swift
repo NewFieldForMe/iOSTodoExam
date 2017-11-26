@@ -57,11 +57,7 @@ class TodoItemViewController: UIViewController {
             .bind(to: self.titleTextField.rx.text)
             .disposed(by: self.disposeBag)
         
-        // FIXME: 初期化もViewModelの中で行いたい
-        vm.screenInitialize.subscribe(onNext: { (model) in
-            vm.todoTitle.value = model.title
-            vm.navigationTitle.value = "Edit Todo"
-        }).disposed(by: self.disposeBag)
+        vm.screenInitializeForModify()
     }
     
     override func didReceiveMemoryWarning() {
@@ -73,7 +69,7 @@ class TodoItemViewController: UIViewController {
 class TodoItemViewControllerViewModel {
     let create: Observable<Void>
     let modify: Observable<Void>
-    var screenInitialize: Observable<TodoModel>
+    let modifyTodoModel: Observable<TodoModel>
     var navigationTitle :Variable<String> = Variable<String>("")
     var todoTitle: Variable<String> = Variable<String>("")
     var disposeBag = DisposeBag()
@@ -97,7 +93,7 @@ class TodoItemViewControllerViewModel {
                 return todo.post().andThen(Observable<Void>.just(())).asObservable()
             }
         
-        let modifyTodoModel = input.modifyTodo
+        modifyTodoModel = input.modifyTodo
             .flatMap { $0.flatMap { Observable.just($0) } ?? Observable.empty() }
         
         modify = Observable.combineLatest(
@@ -114,8 +110,16 @@ class TodoItemViewControllerViewModel {
         
         self.navigationTitle.value = "Add Todo"
         self.todoTitle.value = ""
-        
-        screenInitialize = modifyTodoModel
+    }
+    
+    // FIXME: メソッドを使っているができれば、RxSwiftを使いたい
+    // バインディングのタイミングがどうしても後になって、空の状態になってしまうため、
+    // メソッドを使っている。
+    func screenInitializeForModify(){
+        self.modifyTodoModel.subscribe(onNext: { (todo) in
+            self.todoTitle.value = todo.title
+            self.navigationTitle.value = "Edit Todo"
+        }).disposed(by: self.disposeBag)
     }
 }
 

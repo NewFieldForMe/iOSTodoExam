@@ -8,6 +8,8 @@ target 'TodoExam' do
   # Pods for TodoExam
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxTest'
+  pod 'RxBlocking'
   pod 'Alamofire'
   pod 'ObjectMapper'
   pod 'AlamofireObjectMapper'

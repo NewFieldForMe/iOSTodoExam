@@ -20,6 +20,9 @@
 		92DFBDE61FC2E8AC00ACF4E5 /* TodoItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDE51FC2E8AC00ACF4E5 /* TodoItemViewController.swift */; };
 		92DFBDE91FC2F0E500ACF4E5 /* TodoListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDE81FC2F0E500ACF4E5 /* TodoListItemCell.swift */; };
 		92F5F47E1FC807C800BE37D6 /* SwinjectStoryboardExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F5F47D1FC807C800BE37D6 /* SwinjectStoryboardExtension.swift */; };
+		92FBA6881FCABB7300F8404F /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDE21FC19D7800ACF4E5 /* APIService.swift */; };
+		92FBA6891FCABB9200F8404F /* TodoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDDF1FC19C1000ACF4E5 /* TodoModel.swift */; };
+		92FBA68A1FCAD99700F8404F /* TodoItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DFBDE51FC2E8AC00ACF4E5 /* TodoItemViewController.swift */; };
 		CBA01DD7102FCEA4D40B6AB8 /* Pods_TodoExamUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE14856CD5E415530B107B10 /* Pods_TodoExamUITests.framework */; };
 		EA24DE6A6F044A0A81C13FB7 /* Pods_TodoExam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8E830BB3DAF1A30AA99AD40 /* Pods_TodoExam.framework */; };
 /* End PBXBuildFile section */
@@ -498,8 +501,10 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxTest/RxTest.framework",
 				"${BUILT_PRODUCTS_DIR}/Swinject/Swinject.framework",
 				"${BUILT_PRODUCTS_DIR}/SwinjectStoryboard/SwinjectStoryboard.framework",
 			);
@@ -508,8 +513,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxTest.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Swinject.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwinjectStoryboard.framework",
 			);
@@ -539,7 +546,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92FBA6891FCABB9200F8404F /* TodoModel.swift in Sources */,
+				92FBA6881FCABB7300F8404F /* APIService.swift in Sources */,
 				925AF77A1FC16CC100446595 /* TodoExamTests.swift in Sources */,
+				92FBA68A1FCAD99700F8404F /* TodoItemViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

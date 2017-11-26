@@ -26,7 +26,8 @@ class TodoListViewController: UIViewController {
         addButton.tintColor = UIColor.orange
         
         self.navigationItem.title = "Todo List"
-        /* Rxデータバインド */
+        
+        /* TableViewをRxデータバインド */
         datasource = TodoDataSource(api: api)
         
         // TableViewとデータソースのバインド
@@ -34,7 +35,7 @@ class TodoListViewController: UIViewController {
             .bind(to: todoTableView.rx.items(dataSource: datasource!))
             .disposed(by: self.disposeBag)
         
-        // セルのセレクト
+        // セルがセレクトされた場合は、編集画面に突入する
         todoTableView.rx.modelSelected(TodoModel.self)
             .subscribe(onNext: { (todo) in
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)

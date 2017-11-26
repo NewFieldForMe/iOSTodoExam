@@ -33,7 +33,7 @@ class TodoModel: Mappable, IAPIInfomation, ModelAPI {
         self.init(api: api)
     }
     
-    init(api: APIService){
+    required init(api: APIService){
         self.api = api
     }
     

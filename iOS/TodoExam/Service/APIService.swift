@@ -24,6 +24,7 @@ protocol IAPIInfomation {
     var path: String { get }
     var id: Int { get }
     func requestParameter() -> [String: Any]
+    init(api: APIService)
 }
 
 class API: APIService {
