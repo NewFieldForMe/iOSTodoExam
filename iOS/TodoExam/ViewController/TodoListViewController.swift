@@ -10,12 +10,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class TodoListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
+class TodoListViewController: UIViewController {
     @IBOutlet weak var todoTableView: UITableView!
     @IBOutlet weak var addButton: UIButton!
     var disposeBag = DisposeBag()
-    var todoItemList: [TodoModel] = []
     var api: APIService?
+    var datasource: TodoDataSource?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,65 +25,89 @@ class TodoListViewController: UIViewController, UITableViewDataSource, UITableVi
         addButton.setImage(backImage!, for: UIControlState.normal)
         addButton.tintColor = UIColor.orange
         
-        todoTableView.delegate = self
-        todoTableView.dataSource = self
         self.navigationItem.title = "Todo List"
         /* Rxデータバインド */
-//        todoList.delegate = nil
-//        todoList.dataSource = nil
-//        let service = APIService()
-//        let items: Observable<[TodoModel]> = service.getTodoList()
-//            items.bindTo(self.todoList.rx.items(cellIdentifier: "TodoListItemCell", cellType: TodoListItemCell.self)) { (row, element, cell) in
-//                    cell.titleLabel?.text = element.title
-//                }
-//                .disposed(by: disposeBag)
+        datasource = TodoDataSource(api: api)
+        
+        // TableViewとデータソースのバインド
+        TodoModel(api: api!).getList()
+            .bind(to: todoTableView.rx.items(dataSource: datasource!))
+            .disposed(by: self.disposeBag)
+        
+        // セルのセレクト
+        todoTableView.rx.modelSelected(TodoModel.self)
+            .subscribe(onNext: { (todo) in
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "TodoItemViewController") as! TodoItemViewController
+                controller.modifyTodo = todo
+                self.navigationController?.pushViewController(controller, animated: true)
+            })
+            .disposed(by: self.disposeBag)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        refreshTodoList()
+        datasource?.refreshTodoList(tableView: self.todoTableView)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+}
+
+class TodoDataSource:NSObject, UITableViewDataSource, RxTableViewDataSourceType, SectionedViewDataSourceType {
+    typealias Element = [TodoModel]
+    var _todoModels: Element = []
+    var api: APIService?
+    var disposeBag = DisposeBag()
+    
+    init(api: APIService?) {
+        self.api = api
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.todoItemList.count
+        return _todoModels.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TodoListItemCell.reuseIdentifier) as! TodoListItemCell
-
-        cell.setup(model: self.todoItemList[indexPath.row], indexPath: indexPath)
+        
+        cell.setup(model: _todoModels[indexPath.row], indexPath: indexPath)
         cell.completeEvent.subscribe(
-            onNext: {(index) in
-                self.refreshTodoList()
+            {(index) in
+                self.refreshTodoList(tableView: tableView)
         }).disposed(by: cell.disposeBag)
-
+        
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "TodoItemViewController") as! TodoItemViewController
-        controller.modifyTodo = self.todoItemList[indexPath.row]
-        self.navigationController?.pushViewController(controller, animated: true)
+
+    func tableView(_ tableView: UITableView, observedEvent: Event<[TodoModel]>) {
+        Binder(self) { (dataSource, element) in
+            self.refreshTodoList(tableView: tableView)
+            }
+            .on(observedEvent)
     }
     
-    func refreshTodoList() {
+    func model(at indexPath: IndexPath) throws -> Any {
+        return _todoModels[indexPath.row]
+    }
+    
+    func refreshTodoList(tableView: UITableView) {
         guard let api = self.api else {
             fatalError("api service isn't regist DI container.")
         }
         TodoModel(api: api).getList()
             .subscribe(onNext: { (items) in
-                self.todoItemList = items
-                self.todoTableView.reloadData()
-            }, onError: { (error) in
+                self._todoModels = items
+                tableView.reloadData()
+        }, onError: { (error) in
                 print(error)
             }, onCompleted: {
             }).disposed(by: disposeBag)
     }
 }
-
