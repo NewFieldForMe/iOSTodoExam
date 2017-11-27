@@ -13,23 +13,18 @@ import ObjectMapper
 import AlamofireObjectMapper
 
 protocol APIService{
-    func getListAPI<T: Mappable & IAPIInfomation>(model: T) -> Observable<[T]>
-    func postAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable
-    func updateAPI<T: Mappable & IAPIInfomation>(model: T) -> Observable<T>
-    func deleteAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable
+    func getListAPI<T: Mappable & APIInfomation>(model: T) -> Observable<[T]>
+    func postAPI<T: Mappable & APIInfomation>(model: T) -> Completable
+    func updateAPI<T: Mappable & APIInfomation>(model: T) -> Observable<T>
+    func deleteAPI<T: Mappable & APIInfomation>(model: T) -> Completable
 }
 
-protocol IAPIInfomation {
-    var baseURL: String { get }
-    var path: String { get }
-    var id: Int { get }
-    func requestParameter() -> [String: Any]
-    init(api: APIService)
-}
-
+/*
+ * REST APIを実行するサービス
+ */
 class API: APIService {
     
-    func getListAPI<T: Mappable & IAPIInfomation>(model: T) -> Observable<[T]>{
+    func getListAPI<T: Mappable & APIInfomation>(model: T) -> Observable<[T]>{
         return Observable.create { (observer: AnyObserver<[T]>) in
             Alamofire.request(model.baseURL + model.path).responseArray() { (response: DataResponse<[T]>) in
                 switch response.result {
@@ -44,7 +39,7 @@ class API: APIService {
         }
     }
     
-    func postAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable {
+    func postAPI<T: Mappable & APIInfomation>(model: T) -> Completable {
         return Completable.create { (observer) -> Disposable in
             Alamofire.request(model.baseURL + model.path, method: HTTPMethod.post, parameters: model.requestParameter(), encoding: JSONEncoding.default, headers: nil).responseJSON{ (response: DataResponse<Any>) in
                 switch response.result {
@@ -60,7 +55,7 @@ class API: APIService {
         }
     }
     
-    func updateAPI<T>(model: T) -> Observable<T> where T : Mappable, T : IAPIInfomation {
+    func updateAPI<T>(model: T) -> Observable<T> where T : Mappable, T : APIInfomation {
         return Observable.create { (observer: AnyObserver<T>) in
             Alamofire.request(model.baseURL + model.path + "/" + model.id.description, method: HTTPMethod.put, parameters: model.requestParameter(), encoding: JSONEncoding.default, headers: nil).responseObject() { (response: DataResponse<T>) in
                 switch response.result {
@@ -75,7 +70,7 @@ class API: APIService {
         }
     }
 
-    func deleteAPI<T: Mappable & IAPIInfomation>(model: T) -> Completable {
+    func deleteAPI<T: Mappable & APIInfomation>(model: T) -> Completable {
         return Completable.create { (observer) -> Disposable in
             Alamofire.request(model.baseURL + model.path + "/" + model.id.description, method: HTTPMethod.delete, parameters: nil, encoding: JSONEncoding.default, headers: nil).responseJSON{ (response: DataResponse<Any>) in
                 switch response.result {

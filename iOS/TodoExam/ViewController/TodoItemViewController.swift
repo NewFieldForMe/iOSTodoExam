@@ -8,7 +8,13 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
+/*
+ * Todo作成、修正画面
+ * modifyTodoプロパティに修正対象のTodoが設定されていれば修正、
+ * 設定されていなければ作成画面となる
+ */
 class TodoItemViewController: UIViewController {
     
     @IBOutlet weak var titleTextField: UITextField!
@@ -16,12 +22,16 @@ class TodoItemViewController: UIViewController {
     var modifyTodo: TodoModel?
     var disposeBag = DisposeBag()
     var api: APIService?
+    static let controllerIdentifer = "TodoItemViewController"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.okButton.layer.cornerRadius = self.okButton.frame.height / 2
         self.okButton.backgroundColor = UIColor.orange
         
+        // ViewModelの作成
+        // ControllerのmodifyTodoがnilならOKボタンタップでTodoを作成し、
+        // modifyTodoが渡されていればOKボタンタップでTodoを修正する
         let vm = TodoItemViewControllerViewModel(input: (
             todoTitle: titleTextField.rx.text.orEmpty.asObservable(),
             okTaps: okButton.rx.tap.asObservable(),
@@ -29,32 +39,30 @@ class TodoItemViewController: UIViewController {
             ),
             dependency: self.api!)
         
-        vm.create.subscribe(onNext: { (_) in
-            self.navigationController?.popViewController(animated: true)
+        vm.create.subscribe(onNext: { [weak self](_) in
+            self?.navigationController?.popViewController(animated: true)
         }, onError: { (error) in
             print(error)
-        }, onCompleted: {
         }).disposed(by: self.disposeBag)
         
-        vm.modify.subscribe(onNext: { (_) in
-            self.navigationController?.popViewController(animated: true)
+        vm.modify.subscribe(onNext: { [weak self](_) in
+            self?.navigationController?.popViewController(animated: true)
         }, onError: { (error) in
             print(error)
-        }, onCompleted: {
         }).disposed(by: self.disposeBag)
         
-        vm.navigationTitle.asObservable()
-            .bind(to: self.navigationItem.rx.title)
+        vm.navigationTitle.asDriver()
+            .drive(self.navigationItem.rx.title)
             .disposed(by: self.disposeBag)
         
-        vm.todoTitle.asObservable()
-            .bind(to: self.titleTextField.rx.text)
+        vm.todoTitle.asDriver()
+            .drive(self.titleTextField.rx.text)
             .disposed(by: self.disposeBag)
         
         titleTextField.rx.text.subscribe(onNext: { (title) in
             vm.todoTitle.value = title!
         }, onError: { (error) in
-        }, onCompleted: {
+            print(error)
         }).disposed(by: self.disposeBag)
     }
     
@@ -65,10 +73,10 @@ class TodoItemViewController: UIViewController {
 }
 
 class TodoItemViewControllerViewModel {
-    let create: Observable<Void>
-    let modify: Observable<Void>
-    let navigationTitle :Variable<String> = Variable<String>("")
-    let todoTitle: Variable<String> = Variable<String>("")
+    let create: Observable<Void>                                    // Todo作成通知イベント
+    let modify: Observable<Void>                                    // Todo修正通知イベント
+    let navigationTitle :Variable<String> = Variable<String>("")    // ナビゲーションバーのタイトル文字列
+    let todoTitle: Variable<String> = Variable<String>("")          // Todoのタイトル文字列
     private let disposeBag = DisposeBag()
 
     init(input: (
@@ -78,11 +86,18 @@ class TodoItemViewControllerViewModel {
         ),
          dependency:(
         APIService
-        )
-        ) {
+        )) {
+        // 修正対象のTodoが存在していればTodoModelを流し、
+        // nilならemptyを流すストリームを作り、init内部で使用する
+        let modifyTodoModel = input.modifyTodo
+            .flatMap { $0.flatMap { Observable.just($0) } ?? Observable.empty() }
+        
+        // Todo作成の実行
+        // modifyModelが設定されていなければ、Neverストリームを流す
         create = Observable.combineLatest(
                 input.okTaps.withLatestFrom(input.todoTitle),
-                input.modifyTodo)
+                input.modifyTodo
+            )
             .flatMap { (text, modifyModel) -> Observable<Void> in
                 if modifyModel != nil { return Observable.never() }
                 let todo = TodoModel(api: dependency)
@@ -90,12 +105,11 @@ class TodoItemViewControllerViewModel {
                 return todo.post().andThen(Observable<Void>.just(())).asObservable()
             }
         
-        let modifyTodoModel = input.modifyTodo
-            .flatMap { $0.flatMap { Observable.just($0) } ?? Observable.empty() }
-        
+        // Todo修正の実行
+        // modifyModelが設定されていれば、Todoのタイトルを設定してupdateを行う
         modify = Observable.combineLatest(
-            input.okTaps.withLatestFrom(todoTitle.asObservable()),
-            modifyTodoModel
+                input.okTaps.withLatestFrom(todoTitle.asObservable()),
+                modifyTodoModel
             )
             .flatMap { (text, todo) -> Observable<TodoModel> in
                 todo.title = text
@@ -105,14 +119,14 @@ class TodoItemViewControllerViewModel {
                 return Observable.just(())
             })
         
+        // Todoとナビゲーションバータイトルの初期表示
         todoTitle.value = ""
         navigationTitle.value = "Add Todo"
         
-        modifyTodoModel.subscribe(onNext: { (model) in
-            self.todoTitle.value = model.title
-            self.navigationTitle.value = "Edit Todo"
-        })
-        .disposed(by: disposeBag)
+        modifyTodoModel.subscribe(onNext: { [weak self] (model) in
+            self?.todoTitle.value = model.title
+            self?.navigationTitle.value = "Edit Todo"
+        }).disposed(by: disposeBag)
     }
 }
 

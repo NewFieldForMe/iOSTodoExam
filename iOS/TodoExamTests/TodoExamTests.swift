@@ -18,7 +18,7 @@ import ObjectMapper
  *  APIService Stub
  */
 class APIStub: APIService {
-    func getListAPI<T>(model: T) -> Observable<[T]> where T : Mappable, T : IAPIInfomation {
+    func getListAPI<T>(model: T) -> Observable<[T]> where T : Mappable, T : APIInfomation {
         let one = T(api: self)
         let two = T(api: self)
         let three = T(api: self)
@@ -26,18 +26,18 @@ class APIStub: APIService {
         return Observable.just([one, two, three])
     }
     
-    func postAPI<T>(model: T) -> Completable where T : Mappable, T : IAPIInfomation {
+    func postAPI<T>(model: T) -> Completable where T : Mappable, T : APIInfomation {
         return Completable.create(subscribe: { (observer) -> Disposable in
             observer(.completed)
             return Disposables.create()
         })
     }
     
-    func updateAPI<T>(model: T) -> Observable<T> where T : Mappable, T : IAPIInfomation {
+    func updateAPI<T>(model: T) -> Observable<T> where T : Mappable, T : APIInfomation {
         return Observable.just(model)
     }
     
-    func deleteAPI<T>(model: T) -> Completable where T : Mappable, T : IAPIInfomation {
+    func deleteAPI<T>(model: T) -> Completable where T : Mappable, T : APIInfomation {
         return Completable.create(subscribe: { (observer) -> Disposable in
             observer(.completed)
             return Disposables.create()

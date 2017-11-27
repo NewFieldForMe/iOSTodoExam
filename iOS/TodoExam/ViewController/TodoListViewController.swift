@@ -10,6 +10,9 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+/*
+ * Todo一覧画面
+ */
 class TodoListViewController: UIViewController {
     @IBOutlet weak var todoTableView: UITableView!
     @IBOutlet weak var addButton: UIButton!
@@ -20,7 +23,6 @@ class TodoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         let backImage = UIImage(named: "plus_button")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
         addButton.setImage(backImage!, for: UIControlState.normal)
         addButton.tintColor = UIColor.orange
@@ -39,7 +41,7 @@ class TodoListViewController: UIViewController {
         todoTableView.rx.modelSelected(TodoModel.self)
             .subscribe(onNext: { (todo) in
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let controller = storyboard.instantiateViewController(withIdentifier: "TodoItemViewController") as! TodoItemViewController
+                let controller = storyboard.instantiateViewController(withIdentifier:  TodoItemViewController.controllerIdentifer) as! TodoItemViewController
                 controller.modifyTodo = todo
                 self.navigationController?.pushViewController(controller, animated: true)
             })

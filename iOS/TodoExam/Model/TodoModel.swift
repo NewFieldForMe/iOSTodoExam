@@ -12,14 +12,31 @@ import RxSwift
 import SwinjectStoryboard
 import Swinject
 
+/*
+ * Modelが持つAPIメソッド
+ * Modelに関連するAPIはModelAPIを介して行う
+ */
 protocol ModelAPI {
-    func getList() -> Observable<[TodoModel]>
+    associatedtype ModelType
+    func getList() -> Observable<[ModelType]>
     func post() -> Completable
-    func update() -> Observable<TodoModel>
+    func update() -> Observable<ModelType>
     func delete() -> Completable
 }
 
-class TodoModel: Mappable, IAPIInfomation, ModelAPI {
+/*
+ * APIの基本情報となるURLやパスを提供するインターフェース
+ */
+protocol APIInfomation {
+    var baseURL: String { get }
+    var path: String { get }
+    var id: Int { get }
+    func requestParameter() -> [String: Any]
+    init(api: APIService)
+}
+
+class TodoModel: Mappable, APIInfomation, ModelAPI {
+    typealias ModelType = TodoModel
     let baseURL: String = "http://localhost:3000"
     let path: String = "/todo_items"
     let api: APIService
