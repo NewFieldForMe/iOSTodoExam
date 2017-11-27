@@ -39,13 +39,12 @@ class TodoListViewController: UIViewController {
         
         // セルがセレクトされた場合は、編集画面に突入する
         todoTableView.rx.modelSelected(TodoModel.self)
-            .subscribe(onNext: { (todo) in
+            .subscribe(onNext: { [weak self](todo) in
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let controller = storyboard.instantiateViewController(withIdentifier:  TodoItemViewController.controllerIdentifer) as! TodoItemViewController
                 controller.modifyTodo = todo
-                self.navigationController?.pushViewController(controller, animated: true)
-            })
-            .disposed(by: self.disposeBag)
+                self?.navigationController?.pushViewController(controller, animated: true)
+            }).disposed(by: self.disposeBag)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,16 +81,16 @@ class TodoDataSource:NSObject, UITableViewDataSource, RxTableViewDataSourceType,
         
         cell.setup(model: _todoModels[indexPath.row], indexPath: indexPath)
         cell.completeEvent.subscribe(
-            {(index) in
-                self.refreshTodoList(tableView: tableView)
+            {[weak self] (index) in
+                self?.refreshTodoList(tableView: tableView)
         }).disposed(by: cell.disposeBag)
         
         return cell
     }
 
     func tableView(_ tableView: UITableView, observedEvent: Event<[TodoModel]>) {
-        Binder(self) { (dataSource, element) in
-            self.refreshTodoList(tableView: tableView)
+        Binder(self) { [weak self](dataSource, element) in
+                self?.refreshTodoList(tableView: tableView)
             }
             .on(observedEvent)
     }
@@ -105,12 +104,11 @@ class TodoDataSource:NSObject, UITableViewDataSource, RxTableViewDataSourceType,
             fatalError("api service isn't regist DI container.")
         }
         TodoModel(api: api).getList()
-            .subscribe(onNext: { (items) in
-                self._todoModels = items
+            .subscribe(onNext: {[weak self] (items) in
+                self?._todoModels = items
                 tableView.reloadData()
-        }, onError: { (error) in
+            }, onError: { (error) in
                 print(error)
-            }, onCompleted: {
             }).disposed(by: disposeBag)
     }
 }
