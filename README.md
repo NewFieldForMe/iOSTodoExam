@@ -1,12 +1,13 @@
 # iOSTodoExam
-Todoアプリです.
+Todoアプリです.  
+Todo一覧画面、Todo作成、編集画面で構成されています。
 
 ## 動作デモ
 ![TodoExam](./TodoExam.gif)  
 
 ## 開発環境  
 - Xcode 9.1
-- iOS 11 
+- iOS 11+ 
 
 ## 使用ライブラリ
 - RxSwift
@@ -19,8 +20,8 @@ Todoアプリです.
 - RxTest
 - RxBlocking
 
-## 最初に
-`pod install`を実行してください。
+## iOS開発環境について
+`pod install`を実行して、ライブラリを使用できるようにしてください。
 
 ## APIについて
 APIはRails、dockerで作成しています。以下のコマンドで起動してください。APIは3000番ポートを使用します。
@@ -34,7 +35,7 @@ docker-compose up -d
 docker-compose run --rm app rake db:seed
 ```
 
-### API
+### APIインターフェース
 TodoデータはAPIサーバーによって管理され、Todoモデルはid, title, created_at, updated_atプロパティを持ちます。(iOSアプリ側ではcreated_at, updated_atは使用しません。)
 
 ルーティングは以下の通りです。
